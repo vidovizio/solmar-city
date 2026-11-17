@@ -1,53 +1,42 @@
-// Keyboard and pointer input. Held keys give a steering direction; one-shot presses (start or
-// restart, pause) are queued as bit flags and taken once by the loop, so a press between two
-// frames is never lost and never counted twice.
+const KEYS = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight', 'Space', 'KeyE', 'KeyR', 'KeyM', 'KeyP', 'KeyF', 'Escape']);
 
-export const ACTION_CONFIRM = 1;
-export const ACTION_PAUSE = 2;
-
-const LEFT = new Set(['ArrowLeft', 'KeyA']);
-const RIGHT = new Set(['ArrowRight', 'KeyD']);
-const CONFIRM = new Set(['Space', 'Enter']);
-const PAUSE = new Set(['KeyP', 'Escape']);
-
-export function createInput(target) {
-  let left = false;
-  let right = false;
-  let actions = 0;
-
-  window.addEventListener('keydown', (event) => {
-    if (LEFT.has(event.code)) left = true;
-    else if (RIGHT.has(event.code)) right = true;
-    else if (CONFIRM.has(event.code)) {
-      if (!event.repeat) actions |= ACTION_CONFIRM;
-    } else if (PAUSE.has(event.code)) {
-      if (!event.repeat) actions |= ACTION_PAUSE;
-    } else return;
-    event.preventDefault();
-  });
-  window.addEventListener('keyup', (event) => {
-    if (LEFT.has(event.code)) left = false;
-    else if (RIGHT.has(event.code)) right = false;
-  });
-  // A key released while the tab is hidden never sends keyup: let go of everything on blur.
-  window.addEventListener('blur', () => {
-    left = false;
-    right = false;
-  });
-  target.addEventListener('pointerdown', () => {
-    actions |= ACTION_CONFIRM;
-  });
-
-  return {
-    /** -1 for left, 1 for right, 0 for neither or both. */
-    direction() {
-      return (right ? 1 : 0) - (left ? 1 : 0);
-    },
-    /** The one-shot presses since the last call, as ACTION_* flags. */
-    takeActions() {
-      const taken = actions;
-      actions = 0;
-      return taken;
-    },
+export function createInput(canvas) {
+  const keys = Object.create(null);
+  const input = {
+    keys, dx: 0, dy: 0, fire: false, firePressed: false, interact: false,
+    pause: false, save: false, missions: false, reload: false, melee: false, pointer: false,
   };
+  window.addEventListener('keydown', (event) => {
+    if (KEYS.has(event.code)) event.preventDefault();
+    if (event.repeat) return;
+    keys[event.code] = true;
+    if (event.code === 'KeyE') input.interact = true;
+    if (event.code === 'Escape') input.pause = true;
+    if (event.code === 'KeyP') input.save = true;
+    if (event.code === 'KeyM') input.missions = true;
+    if (event.code === 'KeyR') input.reload = true;
+    if (event.code === 'KeyF') input.melee = true;
+  });
+  window.addEventListener('keyup', (event) => { keys[event.code] = false; });
+  window.addEventListener('blur', () => {
+    for (const key of Object.keys(keys)) keys[key] = false;
+    input.fire = false;
+  });
+  canvas.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0) return;
+    input.fire = true;
+    input.firePressed = true;
+    if (document.pointerLockElement !== canvas && !window.__shotMode) canvas.requestPointerLock?.();
+  });
+  window.addEventListener('pointerup', (event) => { if (event.button === 0) input.fire = false; });
+  document.addEventListener('pointerlockchange', () => { input.pointer = document.pointerLockElement === canvas; });
+  document.addEventListener('mousemove', (event) => {
+    if (input.pointer) { input.dx += event.movementX; input.dy += event.movementY; }
+  });
+  return input;
+}
+
+export function clearInput(input) {
+  input.dx = 0; input.dy = 0; input.firePressed = false;
+  input.interact = false; input.pause = false; input.save = false; input.missions = false; input.reload = false; input.melee = false;
 }
