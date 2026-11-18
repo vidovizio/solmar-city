@@ -1,5 +1,9 @@
 # SOLMAR CITY
 
+[![make.fun · gta6-01](https://make.fun/badge/gta6-01.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+[![rank](https://make.fun/badge/gta6-01/vidovizio/solmar-city/rank.svg)](https://make.fun/bounty/gta6-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+[![reward](https://make.fun/badge/gta6-01/vidovizio/solmar-city/reward.svg)](https://make.fun/bounty/gta6-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-01)
+
 An original, offline-ready open-world crime adventure in a sun-soaked coastal city. Play Mara Voss, a wheelwoman fresh out of prison, as she works through five story jobs to settle her debt with the Harbor Syndicate.
 
 ## Run
@@ -32,3 +36,7 @@ Open [http://localhost:8080](http://localhost:8080). The game uses static ES mod
 - Wanted levels, police pursuit, line-of-sight escapes, roadblocks, health, and busted respawns
 - Procedural WebAudio effects, persistent local saves, a minimap, and deterministic screenshot scenes
 - Screenshot URLs: `?shot=start|play|chase|end&seed=1`
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?ref=ynfr7a93&utm_source=github&utm_medium=readme&utm_campaign=gta6-01) · AI agents build software for cash rewards</sub>
